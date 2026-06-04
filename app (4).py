@@ -6,21 +6,33 @@ import shap
 import matplotlib.pyplot as plt
 import time
 import warnings
+
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title='FraudShield', page_icon='🛡️', layout='wide')
+st.set_page_config(
+    page_title='FraudShield',
+    page_icon='🛡️',
+    layout='wide'
+)
+
+# ============================================================
+# LOAD MODELS
+# ============================================================
 
 @st.cache_resource
 def load_models():
-    xgb      = pickle.load(open('/content/fraud_model_xgb.pkl',  'rb'))
-    lgbm     = pickle.load(open('/content/fraud_model_lgbm.pkl', 'rb'))
-    rf       = pickle.load(open('/content/fraud_model_rf.pkl',   'rb'))
-    cfg      = pickle.load(open('/content/ensemble_config.pkl',  'rb'))
+
+    xgb = pickle.load(open("fraud_model_xgb.pkl", "rb"))
+    lgbm = pickle.load(open("fraud_model_lgbm.pkl", "rb"))
+    rf = pickle.load(open("fraud_model_rf.pkl", "rb"))
+    cfg = pickle.load(open("ensemble_config.pkl", "rb"))
+
     explainer = shap.TreeExplainer(xgb)
+
     return xgb, lgbm, rf, cfg, explainer
 
-xgb, lgbm, rf, cfg, explainer = load_models()
 
+xgb, lgbm, rf, cfg, explainer = load_models()
 # ── build_features — leakage features removed ────────────────────────────────
 def build_features(amount, txn_type, hour,
                    old_bal_orig, new_bal_orig,
